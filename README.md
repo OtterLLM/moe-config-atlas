@@ -1,6 +1,6 @@
 # MoE Config Atlas
 
-2025 年以来开源 MoE 大模型的稀疏度与形状统计。网站：<https://skystellan.github.io/moe-config-atlas/>
+2025 年以来开源 MoE 大模型的稀疏度与形状统计。网站：<https://otterllm.github.io/moe-config-atlas/>
 
 每个模型的专家数 E、top-k、共享专家数、隐藏维度、专家宽度、层数和注意力布局都直接从 Hugging Face 上的 `config.json` 解析，派生出路由稀疏度 E/k、专家激活比、参数激活比和专家粒度 G，并按厂家和大中小三档统计。每行是一个架构：只改了后训练、上下文长度、MTP 层或权重格式的版本合并成一行，型号显示其中最新的版本；注意力、MoE、层数和维度、模态、词表有任何不同就单独成行。
 

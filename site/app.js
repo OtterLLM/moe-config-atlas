@@ -1784,7 +1784,7 @@ function repoLink(r) {
 
 function detail(m) {
   const cfg = m.config_source
-    ? `<a href="https://github.com/Skystellan/moe-config-atlas/blob/main/configs/${esc(m.repo.replace("/", "__"))}.json" target="_blank" rel="noopener">config.json（本仓库存档）</a>`
+    ? `<a href="https://github.com/OtterLLM/moe-config-atlas/blob/main/configs/${esc(m.repo.replace("/", "__"))}.json" target="_blank" rel="noopener">config.json（本仓库存档）</a>`
     : `<a href="https://huggingface.co/${esc(m.repo)}/blob/main/config.json" target="_blank" rel="noopener">config.json</a>`;
   const items = [
     ["仓库", `${repoLink(m.repo)} · ${cfg}`],
