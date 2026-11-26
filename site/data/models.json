@@ -1,12 +1,12 @@
 {
- "generated": "2026-11-23 10:45 UTC",
+ "generated": "2026-11-26 11:09 UTC",
  "count": 166,
  "bench": {
   "eci": {
    "label": "ECI",
    "name": "Epoch Capabilities Index",
    "url": "https://epoch.ai/benchmarks",
-   "date": "2026-11-24",
+   "date": "2026-11-26",
    "n": 30
   },
   "arena": {
@@ -1208,7 +1208,7 @@
     }
    ],
    "hf_params": 6.7,
-   "license": null,
+   "license": "apache-2.0",
    "notes": "印度政府支持的 BharatGen 项目。",
    "eci": null,
    "eci_ci": null,
@@ -1333,7 +1333,7 @@
     }
    ],
    "hf_params": 17.2,
-   "license": null,
+   "license": "apache-2.0",
    "notes": "模型卡说是早期的后训练检查点。",
    "eci": null,
    "eci_ci": null,
