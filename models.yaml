@@ -357,6 +357,8 @@
   total: 124
   active: 5.5
   notes: Ling-3.0-flash 的语言模型加视觉编码器。
+  derived:
+  - inclusionAI/LingSante-3.1-air-VL
 - vendor: Ling
   name: Ling-3.1-flash-1019
   repo: inclusionAI/Ling-3.1-flash-1019
@@ -364,6 +366,8 @@
   released: 2026-10
   total: 560
   active: 25
+  derived:
+  - inclusionAI/LingSante-3.1-flash
 - vendor: LongCat
   name: LongCat-Flash-Thinking-2601
   repo: meituan-longcat/LongCat-Flash-Thinking-2601
@@ -872,7 +876,7 @@
 - vendor: Sarvam
   name: Sarvam-105B
   repo: sarvamai/sarvam-105b
-  derived: [sarvamai/prism]
+  derived: [sarvamai/prism, sarvamai/sarvam-105b-1711-bf16, sarvamai/sarvam-105b-1711]
   released: 2026-03
   total: 105
   active: 10.3
@@ -1309,3 +1313,67 @@
   total: 52
   active: 12
   notes: SSM 与 Transformer 混合：每 8 层里 1 层注意力、7 层 Mamba-1，注意力不加位置编码；每隔一层是 16 选 2 的 MoE。架构来自 2024 年 8 月的 Jamba 1.5 Mini，这里从 2025 年 2 月的 Jamba Mini 1.6 算起。1.6 和 1.7 要申请访问，没能核对 config，但权重参数量和 Jamba2 Mini 完全相同。
+- vendor: LongCat
+  name: LongCat-2.5
+  repo: meituan-longcat/LongCat-2.5
+  released: 2026-11
+  total: 1779.8
+  active:
+  derived:
+  - meituan-longcat/LongCat-2.5-W4A4
+- vendor: Hunyuan
+  name: Hy4
+  repo: tencent/Hy4
+  released: 2026-10
+  total: 774.4
+  active:
+- vendor: Hunyuan
+  name: Hy4-flash
+  repo: tencent/Hy4-flash
+  released: 2026-11
+  total: 220.3
+  active:
+- vendor: Hunyuan
+  name: Hy4-base
+  repo: tencent/Hy4-base
+  released: 2026-11
+  total: 771.1
+  active:
+- vendor: Thinking Machines
+  name: Inkling-2-Small
+  repo: thinkingmachines/Inkling-2-Small
+  released: 2026-11
+  total: 594.1
+  active:
+- vendor: Thinking Machines
+  name: Inkling-2-Mini
+  repo: thinkingmachines/Inkling-2-Mini
+  released: 2026-11
+  total: 26.4
+  active:
+  derived:
+  - thinkingmachines/TML-d24-varloop-research
+- vendor: Zyphra
+  name: ZONOS3-Mini-transformers
+  repo: Zyphra/ZONOS3-Mini-transformers
+  released: 2026-11
+  total: 0.9
+  active:
+- vendor: TeleAI
+  name: Xing4.1-Preview
+  repo: XingChen-AGI/Xing4.1-Preview
+  released: 2026-11
+  total: 279.9
+  active:
+- vendor: InternLM
+  name: Sage-S2.1
+  repo: internlm/Sage-S2.1
+  released: 2026-10
+  total: 753.3
+  active:
+- vendor: InternLM
+  name: Sage-S2.1-Flash
+  repo: internlm/Sage-S2.1-Flash
+  released: 2026-11
+  total: 321.3
+  active:
