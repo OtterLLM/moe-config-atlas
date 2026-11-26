@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-26 11:09 UTC",
+ "generated": "2026-11-26 11:13 UTC",
  "count": 166,
  "bench": {
   "eci": {
@@ -10831,7 +10831,9 @@
    "name": "Ling-3.0-flash-VL",
    "repo": "inclusionAI/Ling-3.0-flash-VL",
    "variants": [],
-   "derived": [],
+   "derived": [
+    "inclusionAI/LingSante-3.1-air-VL"
+   ],
    "released": "2026-09",
    "year": 2026,
    "total": 124,
@@ -10929,10 +10931,16 @@
    "config_ok": true,
    "config_source": null,
    "hf_created": "2026-09-04",
-   "latest": "2026-09-04",
-   "latest_name": "Ling-3.0-flash-VL",
+   "latest": "2026-11-19",
+   "latest_name": "LingSante-3.1-air-VL",
    "first_name": "Ling-3.0-flash-VL",
    "versions": [
+    {
+     "name": "LingSante-3.1-air-VL",
+     "repo": "inclusionAI/LingSante-3.1-air-VL",
+     "created": "2026-11-19",
+     "derived": true
+    },
     {
      "name": "Ling-3.0-flash-VL",
      "repo": "inclusionAI/Ling-3.0-flash-VL",
@@ -10959,7 +10967,9 @@
    "variants": [
     "inclusionAI/Ling-3.1-flash"
    ],
-   "derived": [],
+   "derived": [
+    "inclusionAI/LingSante-3.1-flash"
+   ],
    "released": "2026-10",
    "year": 2026,
    "total": 560,
@@ -11059,10 +11069,16 @@
    "config_ok": true,
    "config_source": null,
    "hf_created": "2026-10-27",
-   "latest": "2026-10-27",
-   "latest_name": "Ling-3.1-flash-1019",
+   "latest": "2026-11-19",
+   "latest_name": "LingSante-3.1-flash",
    "first_name": "Ling-3.1-flash",
    "versions": [
+    {
+     "name": "LingSante-3.1-flash",
+     "repo": "inclusionAI/LingSante-3.1-flash",
+     "created": "2026-11-19",
+     "derived": true
+    },
     {
      "name": "Ling-3.1-flash-1019",
      "repo": "inclusionAI/Ling-3.1-flash-1019",
@@ -19272,7 +19288,9 @@
    "repo": "sarvamai/sarvam-105b",
    "variants": [],
    "derived": [
-    "sarvamai/prism"
+    "sarvamai/prism",
+    "sarvamai/sarvam-105b-1711-bf16",
+    "sarvamai/sarvam-105b-1711"
    ],
    "released": "2026-03",
    "year": 2026,
@@ -19370,10 +19388,22 @@
    "config_ok": true,
    "config_source": null,
    "hf_created": "2026-03-03",
-   "latest": "2026-11-02",
-   "latest_name": "prism",
+   "latest": "2026-11-15",
+   "latest_name": "sarvam-105b-1711-bf16",
    "first_name": "sarvam-105b",
    "versions": [
+    {
+     "name": "sarvam-105b-1711-bf16",
+     "repo": "sarvamai/sarvam-105b-1711-bf16",
+     "created": "2026-11-15",
+     "derived": true
+    },
+    {
+     "name": "sarvam-105b-1711",
+     "repo": "sarvamai/sarvam-105b-1711",
+     "created": "2026-11-15",
+     "derived": true
+    },
     {
      "name": "prism",
      "repo": "sarvamai/prism",
