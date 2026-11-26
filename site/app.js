@@ -1497,7 +1497,7 @@ function detailOk(v, want) {
   return typeof want === "number" ? v === want : String(v) === String(want);
 }
 const matchAll = (m, cond) => Object.entries(cond || {}).every(([k, w]) => detailOk(m[k], w));
-const applies = (p, m) => matchAll(m, p.when);
+const applies = (p, m) => Boolean(m.config_ok) && matchAll(m, p.when);
 function detailHits(p, m) {
   if (!applies(p, m)) return [];
   const hits = p.variants.filter((v) => !v.related && matchAll(m, v.match));

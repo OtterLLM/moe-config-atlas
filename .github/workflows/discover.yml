@@ -25,11 +25,9 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: python scripts/discover.py
-      - name: Build data for the preview
-        if: steps.scan.outputs.found == 'true'
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
-        run: python scripts/build.py
+      # Do not commit site/data here: pages.yml rebuilds and pushes site/data on main
+      # (weekly and on merge), so committing generated data in auto/discover guarantees
+      # merge conflicts. check.yml verifies the build on the pull request.
       - uses: peter-evans/create-pull-request@v7
         if: steps.scan.outputs.found == 'true'
         with:
@@ -42,4 +40,3 @@ jobs:
           add-paths: |
             models.yaml
             discover_state.json
-            site/data

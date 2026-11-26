@@ -167,7 +167,22 @@ def check_versions(m, parsed, versions, refresh):
                             f"({top}); make the latest version the repo and the name, or list it under derived")
 
 
-def build_entry(m, refresh):
+# Fields derived from config.json (and the weight index / modeling code). Kept from the previous
+# site/data/models.json if a previously public repo goes gated or unreachable, just as bench.py
+# keeps the previous leaderboard scores when a board is down.
+CONFIG_FIELDS = (
+    "E", "k", "s", "E_over_k", "expert_activation", "granularity",
+    "d_model", "d_expert", "d_shared", "latent", "zero_experts",
+    "layers", "mixer_layers", "aspect", "global_attn_frac", "kv_kib_per_token",
+    "window", "window_sink", "mla", "kv_heads", "head_dim", "heads", "qk_dim",
+    "attn_ratio", "gqa", "rope_frac", "vocab", "context", "mtp", "moe_layers",
+    "attention", "layout", "dense_layers",
+    *hfconfig.FEATURES, *hfconfig.DETAILS,
+    "precision", "quant", "model_type", "per_layer", "config_ok", "config_source",
+)
+
+
+def build_entry(m, refresh, prev_entry=None):
     repo = m["repo"]
     raw, config_source = fetch_config(repo, refresh)
     parsed = hfconfig.parse(raw) if raw else {f: None for f in hfconfig.ALIASES}
@@ -263,6 +278,14 @@ def build_entry(m, refresh):
         "license": (info.get("cardData") or {}).get("license"),
         "notes": m.get("notes"),
     }
+    if raw is None and prev_entry and prev_entry.get("config_ok"):
+        print(f"  ! {repo}: config.json unavailable, keeping parsed fields from previous models.json", file=sys.stderr)
+        for k in CONFIG_FIELDS:
+            if k in prev_entry:
+                entry[k] = prev_entry[k]
+        for k, v in (m.get("override") or {}).items():
+            if k in entry:
+                entry[k] = v
     return entry
 
 
@@ -334,7 +357,7 @@ def write_details(rows):
                 v["source"] = {"title": v["source"][0], "url": v["source"][1]}
         used = {i: [] for i in range(len(p["variants"]))}
         for m in rows:
-            if not match(m, p.get("when")):
+            if not m.get("config_ok") or not match(m, p.get("when")):
                 continue
             hits = [i for i, v in enumerate(p["variants"]) if not v.get("related") and match(m, v["match"])]
             assert hits, f"{where}: {m['name']} fits no variant"
@@ -350,6 +373,11 @@ def main():
     ap.add_argument("--refresh", action="store_true")
     args = ap.parse_args()
 
+    OUT.mkdir(parents=True, exist_ok=True)
+    prev = OUT / "models.json"
+    old = json.loads(prev.read_text()) if prev.exists() else {}
+    prev_by_repo = {x["repo"]: x for x in old.get("models", []) if x.get("repo")}
+
     models = yaml.safe_load((ROOT / "models.yaml").read_text())
     rows = []
     for m in models:
@@ -357,14 +385,10 @@ def main():
         if not m.get("total") or not m.get("active"):
             print("  ! skipped: total / active parameters missing in models.yaml", file=sys.stderr)
             continue
-        rows.append(build_entry(m, args.refresh))
+        rows.append(build_entry(m, args.refresh, prev_by_repo.get(m["repo"])))
     if PROBLEMS:
         sys.exit("models.yaml groups versions wrongly:\n- " + "\n- ".join(PROBLEMS))
     rows.sort(key=lambda x: (x["vendor"], x["released"], x["total"]))
-
-    OUT.mkdir(parents=True, exist_ok=True)
-    prev = OUT / "models.json"
-    old = json.loads(prev.read_text()) if prev.exists() else {}
 
     print("- leaderboards")
     aliases = yaml.safe_load((ROOT / "bench.yaml").read_text()) or {}
