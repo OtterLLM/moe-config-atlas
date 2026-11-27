@@ -164,7 +164,7 @@ const benchNote = (k) => (k === "avg"
   ? L(`归一均分：${boardList(BENCH.avg.sources)} 各自换成标准分后取平均，站内最高 100、最低 0；${BENCH.avg.n} 个配置有分数，小字是缺了哪个榜`,
     `Normalized average: the mean of ${boardList(BENCH.avg.sources)}, each converted to z-scores, with the highest on this site = 100 and the lowest = 0; ${BENCH.avg.n} configurations have a score, and the small print says which board is missing`)
   : L(`${BENCH[k].name}：${BENCH[k].n} 个配置有分数，同一架构的多个版本取最高分，小字是取分的版本`,
-    `${BENCH[k].name}: ${BENCH[k].n} configurations have a score; for one architecture the highest version is taken, and the small print names that version`));
+    `${BENCH[k].name}: ${BENCH[k].n} configurations have a score; for an architecture with several versions the highest score is taken, and the small print names the version it came from`));
 function median(xs) {
   const v = xs.filter((x) => x != null).sort((a, b) => a - b);
   if (!v.length) return null;
