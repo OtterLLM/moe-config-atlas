@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """List Chinese strings in site/data/*.json that site/i18n/en.json cannot translate.
 
-Mirrors the front-end logic: a string without CJK passes through; otherwise an exact
-`strings` entry wins, then `patterns` are tried in order and each captured group is
-translated recursively before being substituted for $1, $2, ...
+Mirrors the front-end logic (trans() and D() in site/app.js): a string without ideographs
+passes through, except that full-width punctuation in it is switched to ASCII; otherwise
+an exact `strings` entry wins, then `patterns` are tried in order and each captured group
+is translated recursively before being substituted for $1, $2, ...
+
+It also lists every data string whose English form still contains an ideograph or
+full-width punctuation (U+3000-303F, U+FF00-FFEF).
 
 Usage: python scripts/i18n_check.py [--strict] [--unused]
-  --strict  exit 1 if any string is untranslated
+  --strict  exit 1 if any string is untranslated or its English still has Chinese text or punctuation
   --unused  also list `strings` keys that no data value uses
 """
 import argparse
@@ -18,6 +22,21 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CJK = re.compile("[一-鿿]")
+# Full-width punctuation that ascii_punct() rewrites (FW_PUNCT in site/app.js), and the wider
+# CJK-punctuation / full-width-forms blocks that must not survive into an English string.
+FW_PUNCT = re.compile("[（）、，。；：]")
+FW = re.compile("[\u3000-\u303f\uff00-\uffef]")
+
+
+def ascii_punct(s):
+    """Same as asciiPunct() in site/app.js."""
+    s = re.sub(" *（", " (", s)
+    s = s.replace("）", ")")
+    s = re.sub("[、，] *", ", ", s)
+    s = re.sub("； *", "; ", s)
+    s = re.sub("： *", ": ", s)
+    s = re.sub("。 *", ". ", s)
+    return re.sub("^ +| +$", "", s)
 
 
 def load_dict(path):
@@ -31,7 +50,7 @@ def load_dict(path):
 def translate(s, strings, patterns, used=None, depth=0):
     """Return the English form of s, or None if some Chinese remains untranslated."""
     if not CJK.search(s):
-        return s
+        return ascii_punct(s) if FW_PUNCT.search(s) else s
     if s in strings:
         if used is not None:
             used.add(s)
@@ -57,7 +76,7 @@ def translate(s, strings, patterns, used=None, depth=0):
 
 def walk(x, out):
     if isinstance(x, str):
-        if CJK.search(x):
+        if CJK.search(x) or FW.search(x):
             out.add(x)
     elif isinstance(x, dict):
         for k, v in x.items():
@@ -81,10 +100,21 @@ def main():
             walk(json.load(f), found)
 
     used = set()
-    missing = sorted(s for s in found if translate(s, strings, patterns, used) is None)
+    missing, leftover = [], []
+    for s in sorted(found):
+        t = translate(s, strings, patterns, used)
+        if t is None:
+            missing.append(s)
+        elif CJK.search(t) or FW.search(t):
+            leftover.append((s, t))
     for s in missing:
         print(s)
-    print(f"{len(missing)} untranslated of {len(found)} Chinese strings")
+    print(f"{len(missing)} untranslated of {len(found)} strings with Chinese text or full-width punctuation")
+    if leftover:
+        print()
+        for s, t in leftover:
+            print(f"{s}\t-> {t}")
+    print(f"{len(leftover)} English results still contain Chinese text or full-width punctuation")
 
     if args.unused:
         # Count a key as used when a data string hits it directly or via a pattern group.
@@ -93,7 +123,7 @@ def main():
         for k in unused:
             print(k)
 
-    return 1 if (args.strict and missing) else 0
+    return 1 if (args.strict and (missing or leftover)) else 0
 
 
 if __name__ == "__main__":
