@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MoE Config Atlas</title>
-<meta name="description" content="2025 年以来开源 MoE 大模型的稀疏度与形状统计，数据每周从 Hugging Face config.json 自动更新。">
+<title data-i18n="title">MoE Config Atlas</title>
+<meta name="description" content="Sparsity and shape statistics for open-weight MoE LLMs released since 2025, refreshed weekly from Hugging Face config.json files." data-i18n-attr="content:meta.desc">
 <link rel="stylesheet" href="style.css">
 <script>
   try { const t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
@@ -14,96 +14,97 @@
 <header class="wrap top">
   <div>
     <h1>MoE Config Atlas</h1>
-    <p class="lede">2025 年以来开源 MoE 大模型的稀疏度与形状。每个配置直接从 Hugging Face 上的 <code>config.json</code> 解析，每周自动更新。</p>
-    <p class="meta" id="meta">加载中…</p>
+    <p class="lede" data-i18n="lede">Sparsity and shape of open-weight MoE LLMs released since 2025. Every configuration is parsed straight from the <code>config.json</code> on Hugging Face and refreshed weekly.</p>
+    <p class="meta" id="meta" data-i18n="loading">Loading…</p>
   </div>
   <nav class="links">
     <a href="data/models.csv" download>CSV</a>
     <a href="data/models.json" download>JSON</a>
     <a href="https://github.com/OtterLLM/moe-config-atlas">GitHub</a>
-    <button id="fold-all" type="button">全部折叠</button>
-    <button id="theme" type="button" aria-label="切换深浅色">◐</button>
+    <span class="lang" id="lang" role="group" aria-label="Language" data-i18n-attr="aria-label:lang.label"><button type="button" data-lang="en" aria-pressed="true" aria-current="true">EN</button><button type="button" data-lang="zh" aria-pressed="false" lang="zh-CN">中文</button></span>
+    <button id="fold-all" type="button" data-i18n="fold.all">Collapse all</button>
+    <button id="theme" type="button" aria-label="Toggle light/dark theme" data-i18n-attr="aria-label:theme.label">◐</button>
   </nav>
 </header>
 
 <main class="wrap">
-  <section class="filters" aria-label="筛选">
-    <input id="q" type="search" placeholder="搜索型号或厂家">
+  <section class="filters" aria-label="Filters" data-i18n-attr="aria-label:filters.label">
+    <input id="q" type="search" placeholder="Search model or vendor" data-i18n-attr="placeholder:q.ph">
     <div class="chips" id="tier-chips"></div>
     <div class="chips" id="year-chips"></div>
-    <select id="vendor" aria-label="厂家"><option value="">全部厂家</option></select>
+    <select id="vendor" aria-label="Vendor" data-i18n-attr="aria-label:vendor.label"><option value="" data-i18n="vendor.all">All vendors</option></select>
     <span class="count" id="count"></span>
   </section>
 
-  <section class="tiles" id="tiles" aria-label="分档统计"></section>
+  <section class="tiles" id="tiles" aria-label="Stats by tier" data-i18n-attr="aria-label:tiles.label"></section>
 
-  <h2 class="sec">稀疏度</h2>
+  <h2 class="sec" data-i18n="sec.sparsity">Sparsity</h2>
   <section class="charts">
     <figure class="card">
-      <figcaption><b>参数激活比</b><span>激活参数 / 总参数，横轴为总参数（对数）</span></figcaption>
+      <figcaption><b data-i18n="c.param.t">Parameter activation ratio</b><span data-i18n="c.param.s">Active params / total params; the x axis is total params (log)</span></figcaption>
       <div class="chart" id="c-param"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>路由稀疏度 E/k</b><span>路由专家数 / 每 token 选中数</span></figcaption>
+      <figcaption><b data-i18n="c.ek.t">Routing sparsity E/k</b><span data-i18n="c.ek.s">Routed experts / experts selected per token</span></figcaption>
       <div class="chart" id="c-ek"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>专家数与 top-k</b><span>斜线是等 E/k 线；点越靠右下越稀疏</span></figcaption>
+      <figcaption><b data-i18n="c.ek2.t">Experts and top-k</b><span data-i18n="c.ek2.s">Diagonal lines are constant E/k; the further to the lower right, the sparser</span></figcaption>
       <div class="chart" id="c-ek2"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>专家粒度 G</b><span>G = 2d / d<sub>expert</sub>，越大专家越细；LatentMoE 不计</span></figcaption>
+      <figcaption><b data-i18n="c.gran.t">Expert granularity G</b><span data-i18n="c.gran.s">G = 2d / d<sub>expert</sub>; larger G means finer experts; LatentMoE excluded</span></figcaption>
       <div class="chart" id="c-gran"></div>
     </figure>
   </section>
   <p class="legend-note" id="legend"></p>
 
-  <h2 class="sec">形状与注意力</h2>
+  <h2 class="sec" data-i18n="sec.shape">Shape and attention</h2>
   <section class="charts">
     <figure class="card">
-      <figcaption><b>宽深比 d/L</b><span>隐藏维度 / token mixer 层数，横轴为激活参数（对数）</span></figcaption>
+      <figcaption><b data-i18n="c.aspect.t">Aspect ratio d/L</b><span data-i18n="c.aspect.s">Hidden size / number of token-mixer layers; the x axis is active params (log)</span></figcaption>
       <div class="chart" id="c-aspect"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>注意力宽度比</b><span>全局层 query 头数 × 每头 QK 维度 / d_model；1× 即头数 × 头维 = d。横轴为首发时间</span></figcaption>
+      <figcaption><b data-i18n="c.attn.t">Attention width ratio</b><span data-i18n="c.attn.s">Global-layer query heads × per-head QK dim / d_model; 1× means heads × head dim = d. The x axis is release date</span></figcaption>
       <div class="chart" id="c-attn"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>注意力宽度与 d_model</b><span>纵轴是 query 头数 × 每头 QK 维度，斜线是等宽度比线</span></figcaption>
+      <figcaption><b data-i18n="c.heads.t">Attention width vs d_model</b><span data-i18n="c.heads.s">The y axis is query heads × per-head QK dim; diagonal lines are constant width ratios</span></figcaption>
       <div class="chart" id="c-heads"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>全局注意力层占比</b><span>其余是线性、Mamba 或滑窗层；横轴为首发时间</span></figcaption>
+      <figcaption><b data-i18n="c.global.t">Share of global-attention layers</b><span data-i18n="c.global.s">The rest are linear, Mamba or sliding-window layers; the x axis is release date</span></figcaption>
       <div class="chart" id="c-global"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>长上下文 KV cache</b><span>每 token 的 bf16 KV 缓存（KiB），只计全局注意力层</span></figcaption>
+      <figcaption><b data-i18n="c.kv.t">Long-context KV cache</b><span data-i18n="c.kv.s">bf16 KV cache per token (KiB), counting global-attention layers only</span></figcaption>
       <div class="chart" id="c-kv"></div>
     </figure>
     <figure class="card">
-      <figcaption><b>最大上下文</b><span>config 里的 max_position_embeddings；横轴为首发时间</span></figcaption>
+      <figcaption><b data-i18n="c.ctx.t">Maximum context</b><span data-i18n="c.ctx.s">max_position_embeddings from the config; the x axis is release date</span></figcaption>
       <div class="chart" id="c-ctx"></div>
     </figure>
   </section>
   <p class="legend-note legend-copy"></p>
 
   <section class="card" id="layers">
-    <h2>逐层结构</h2>
-    <p class="sub">每行一个配置，每格是一层 token mixer，从第一层排到最后一层。格子越高，这一层的 KV 缓存随上下文涨得越多：全局和稀疏注意力最高，滑窗和分块一半，线性注意力、Mamba 和短卷积的状态大小固定，最矮。悬停看每一层，点型号加入并排对比；按归一均分或单个榜单排序，可以看榜单上靠前的模型用的是什么层。随上面的筛选变化。<span class="take" id="lay-take"></span></p>
-    <div class="fp-bar"><div class="chips" id="lay-sort" role="group" aria-label="排序"></div></div>
+    <h2 data-i18n="lay.h">Layer by layer</h2>
+    <p class="sub" data-i18n="lay.sub">One row per configuration, one cell per token-mixer layer, from the first layer to the last. The taller the cell, the more that layer's KV cache grows with context: global and sparse attention are tallest, sliding-window and chunked attention half as tall, and linear attention, Mamba and short convolutions, whose state size is fixed, are shortest. Hover for each layer and click a model name to add it to the side-by-side comparison. Sort by the normalized average or by a single leaderboard to see which layers the top-ranked models use. Follows the filters above.<span class="take" id="lay-take"></span></p>
+    <div class="fp-bar"><div class="chips" id="lay-sort" role="group" aria-label="Sort" data-i18n-attr="aria-label:sort.label"></div></div>
     <p class="legend-note" id="lay-legend"></p>
     <div class="lay-wrap" id="lay"></div>
     <p class="muted lay-note" id="lay-note"></p>
   </section>
 
-  <h2 class="sec">结构特征</h2>
+  <h2 class="sec" data-i18n="sec.features">Structural features</h2>
   <section class="card">
-    <h2>结构指纹</h2>
-    <p class="sub">每行一个配置：左边是形状数值，右边是 <span id="fp-n">33</span> 项结构特征，格子里是具体取值（窗口大小、稀疏注意力种类、超连接路数等）。点列名排序（第一次降序，第二次升序，第三次取消）；按归一均分或单个榜单排序时，最左边多一列分数，可以看表现好的模型都用了哪些结构。按档位分组时，小、中、大三档各排一段，排序只在档内进行，方便比较同一档的模型，每档第一行是这一档的汇总；按厂家汇总看各厂家的采用比例。随上面的筛选变化。</p>
+    <h2 data-i18n="fp.h">Structural fingerprint</h2>
+    <p class="sub" data-i18n="fp.sub">One row per configuration: shape numbers on the left, then <span id="fp-n">33</span> structural features, with the concrete value in each cell (window size, sparse-attention kind, number of hyper-connection streams, and so on). Click a column name to sort (first click descending, second ascending, third clears). When sorted by the normalized average or a single leaderboard, an extra score column appears on the left, so you can see which structures the top performers use. Grouping by tier gives small, medium and large each their own section, sorted within the tier so that models of similar size can be compared, with a summary as the first row of each tier; aggregating by vendor shows each vendor's adoption rates. Follows the filters above.</p>
     <div class="fp-bar">
-      <div class="chips" id="fp-mode" role="group" aria-label="视图"></div>
-      <div class="chips" id="fp-groups" role="group" aria-label="列分组"></div>
-      <div class="chips" id="fp-sort" role="group" aria-label="排序"></div>
+      <div class="chips" id="fp-mode" role="group" aria-label="View" data-i18n-attr="aria-label:view.label"></div>
+      <div class="chips" id="fp-groups" role="group" aria-label="Column groups" data-i18n-attr="aria-label:colgroups.label"></div>
+      <div class="chips" id="fp-sort" role="group" aria-label="Sort" data-i18n-attr="aria-label:sort.label"></div>
     </div>
     <p class="pick-note" id="fp-picked"></p>
     <div class="fp-wrap">
@@ -114,60 +115,60 @@
   </section>
 
   <section class="card" id="compare">
-    <h2>并排对比</h2>
-    <p class="sub">最多 4 个配置，数值行的细条按所选型号里的最大值缩放，取值相同的行显示为灰色。默认是最近发布过大模型（≥500B）的 4 家各自最新的一个；选择会写进网址，可以直接分享。</p>
+    <h2 data-i18n="cmp.h">Side-by-side comparison</h2>
+    <p class="sub" data-i18n="cmp.sub">Up to 4 configurations. The thin bars in numeric rows are scaled to the largest value among the selected models, and rows with identical values are greyed out. By default it shows the latest configuration of each of the 4 vendors that most recently released a large model (≥500B). The selection is written into the URL, so you can share it directly.</p>
     <div class="cmp-bar">
-      <input id="cmp-add" list="model-list" placeholder="输入型号加入对比" autocomplete="off" aria-label="加入对比的型号">
+      <input id="cmp-add" list="model-list" placeholder="Type a model name to add" autocomplete="off" aria-label="Model to add to the comparison" data-i18n-attr="placeholder:cmp.ph;aria-label:cmp.label">
       <datalist id="model-list"></datalist>
       <div class="chips" id="cmp-chips"></div>
-      <label class="check"><input type="checkbox" id="cmp-diff"> 只看不同</label>
+      <label class="check"><input type="checkbox" id="cmp-diff"> <span data-i18n="cmp.diff">Differences only</span></label>
     </div>
     <div class="table-wrap"><table id="cmp"></table></div>
   </section>
 
   <section class="card">
-    <h2>按季度的采用率</h2>
-    <p class="sub">每行一项结构特征，每列一个季度，颜色越深，当季首发的配置里用它的越多；按两年之间涨了多少排序。悬停看具体型号；随上面的筛选变化。<span class="take" id="adopt-take"></span></p>
-    <div class="chips col-groups" id="adopt-groups" role="group" aria-label="特征分组"></div>
+    <h2 data-i18n="adopt.h">Adoption by quarter</h2>
+    <p class="sub" data-i18n="adopt.sub">One row per structural feature, one column per quarter; the darker the cell, the larger the share of that quarter's new configurations that use it. Rows are sorted by how much the share rose between the first and the last year. Hover for the specific models; follows the filters above.<span class="take" id="adopt-take"></span></p>
+    <div class="chips col-groups" id="adopt-groups" role="group" aria-label="Feature groups" data-i18n-attr="aria-label:featgroups.label"></div>
     <div class="aq-wrap" id="adoption"></div>
     <p class="legend-note" id="adopt-legend"></p>
   </section>
 
-  <h2 class="sec" id="details">设计细节对照</h2>
+  <h2 class="sec" id="details" data-i18n="sec.details">Design details compared</h2>
   <section class="card">
-    <p class="sub">同一个位置上各家怎么写：每种写法的公式、来源，和用它的配置。门、sigmoid、归一化和缩放的细节多数在建模代码里，这里逐个对照 config 和代码核对，规则在 <code>details.yaml</code>。点型号可以加入上面的并排对比；随上面的筛选变化。</p>
-    <div class="chips col-groups" id="det-secs" role="group" aria-label="位置分组"></div>
+    <p class="sub" data-i18n="det.sub">How different models write the same position: each variant's formula, its source, and the configurations that use it. Most details of gates, sigmoids, normalization and scaling live in the modeling code, so each is checked against both the config and the code here; the rules are in <code>details.yaml</code>. Click a model to add it to the comparison above; follows the filters above.</p>
+    <div class="chips col-groups" id="det-secs" role="group" aria-label="Position groups" data-i18n-attr="aria-label:posgroups.label"></div>
     <div class="dd" id="det-dist"></div>
     <p class="pick-note" id="det-picked"></p>
     <div id="det"></div>
   </section>
 
-  <h2 class="sec">前沿技术追踪</h2>
+  <h2 class="sec" data-i18n="sec.tech">Frontier technique tracker</h2>
   <section class="card">
-    <p class="sub">2024 年以来的结构和训练改动（加上几项还在扩散的老方法）：最早的出处、独立实验测到的效果、收录的模型里谁在用。采用数从 config 自动统计，随上面的筛选变化；config 看不出的（比如优化器）只列技术报告里写明的。</p>
-    <div class="chips col-groups" id="tech-cats" role="group" aria-label="技术分类"></div>
+    <p class="sub" data-i18n="tech.sub">Architecture and training changes since 2024 (plus a few older methods that are still spreading): the earliest source, the effect measured in independent experiments, and which of the included models use it. Adoption counts are computed automatically from the configs and follow the filters above; for what a config cannot show (the optimizer, for example), only what a tech report states is listed.</p>
+    <div class="chips col-groups" id="tech-cats" role="group" aria-label="Technique categories" data-i18n-attr="aria-label:techcats.label"></div>
     <div class="tl" id="tech-tl"></div>
     <div class="table-wrap">
       <table id="tech">
         <colgroup><col class="c-name"><col class="c-src"><col><col class="c-use"></colgroup>
-        <thead><tr><th class="l">技术</th><th class="l">出处</th><th class="l">独立实验里的效果</th><th class="l">收录模型的采用</th></tr></thead>
+        <thead><tr><th class="l" data-i18n="tech.th.name">Technique</th><th class="l" data-i18n="tech.th.src">Source</th><th class="l" data-i18n="tech.th.eff">Effect in independent experiments</th><th class="l" data-i18n="tech.th.use">Adoption among included models</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
-    <p class="legend-note">效果栏的数字多数来自 Pavlichenko 2026 的 1,129 次消融（d=512–1280，指标是每字节比特数，负数更好），以及 Marin 的预训练提速记录和 535B-A23B 训练配置。小模型上的结论不一定外推到大模型。</p>
+    <p class="legend-note" data-i18n="tech.note">Most numbers in the effect column come from Pavlichenko 2026's 1,129 ablations (d=512–1280, metric is bits per byte, lower is better), plus Marin's pre-training speedup records and the 535B-A23B training config. Conclusions from small models do not necessarily extrapolate to large ones.</p>
   </section>
 
   <section class="card">
-    <h2>各厂家的演化</h2>
-    <p class="sub">每行一家厂家，按第一次出现的时间排；每个点是一个配置，横轴是首发时间，点越大总参数越大（对数），颜色是注意力类型，和逐层结构同色：混了线性层的算线性，其次是稀疏注意力、滑窗。悬停看配置，点击加入并排对比；随上面的筛选变化。<span class="take" id="vendor-take"></span></p>
+    <h2 data-i18n="vend.h">Evolution by vendor</h2>
+    <p class="sub" data-i18n="vend.sub">One row per vendor, ordered by first appearance; each dot is a configuration, the x axis is release date, a bigger dot means more total params (log), and the color is the attention type, using the same colors as the layer-by-layer view: anything with linear layers counts as linear, then sparse attention, then sliding window. Hover for the configuration and click to add it to the side-by-side comparison; follows the filters above.<span class="take" id="vendor-take"></span></p>
     <p class="legend-note" id="vendor-legend"></p>
     <div class="vl" id="vendors"></div>
   </section>
 
   <section class="card">
-    <h2>全表</h2>
-    <p class="sub">默认按最近上传排序；型号是同架构里最新的版本，下面的小字是同架构的其他版本（只换了后训练、上下文或权重格式）。点列名排序，点一行看全部版本和备注，标“衍生”的是在它上面做的专用模型或换了格式的副本；「榜单」分组里是归一均分、各榜分数和取分的版本。</p>
-    <div class="chips col-groups" id="col-groups" role="group" aria-label="列分组"></div>
+    <h2 data-i18n="table.h">Full table</h2>
+    <p class="sub" data-i18n="table.sub">Sorted by latest upload by default. The model name is the newest version of its architecture, and the small print below it lists the other versions of the same architecture (which only changed post-training, context or weight format). Click a column name to sort and click a row to see all versions and notes; entries marked "derived" are specialized models built on it or format-converted copies. The "Leaderboards" group holds the normalized average, each board's score and the version the score was taken from.</p>
+    <div class="chips col-groups" id="col-groups" role="group" aria-label="Column groups" data-i18n-attr="aria-label:colgroups.label"></div>
     <div class="table-wrap">
       <table id="table">
         <thead><tr></tr></thead>
@@ -177,55 +178,57 @@
   </section>
 
   <section class="card defs">
-    <h2>口径</h2>
+    <h2 data-i18n="defs.h">Definitions</h2>
     <dl>
-      <dt>E / k / s</dt><dd>路由专家数 / 每 token 选中的路由专家数 / 共享专家数。逐层不同的模型取均值或众数，表中标 ≈。</dd>
-      <dt>E/k</dt><dd>路由稀疏度，只看路由专家。</dd>
-      <dt>专家激活比 A</dt><dd>(k + s) / (E + s)，把共享专家也算进去。</dd>
-      <dt>参数激活比</dt><dd>激活参数 / 总参数，两者取自模型卡或技术报告（config 里没有）。</dd>
-      <dt>G</dt><dd>2d / d<sub>expert</sub>，d 是隐藏维度。和标准 FFN 宽度 8d/3 比，G≈2.7 相当于"一个专家 = 一个 dense FFN"。</dd>
-      <dt>d/L</dt><dd>宽深比：隐藏维度除以 token mixer 层数（注意力、线性注意力或 Mamba 层）。LongCat 每层有两个注意力子层，按两层计。</dd>
-      <dt>注意力宽度比</dt><dd>全局注意力层的 query 头数 × 每个头的 Q·K 维度，再除以 d_model。头数 × 头维 = d 的 Llama 式设计为 1；MLA 的 Q·K 维度是不加位置的部分加 RoPE 部分（DeepSeek V3 是 128 + 64），DeepSeek V4 系每头 512 维，所以到 6.4–9.1。比值越大，注意力相对残差流越宽。</dd>
-      <dt>Q/KV</dt><dd>全局层每个 KV 头对应几个 query 头（GQA 的分组大小），越大 KV cache 越省。MLA 缓存的是压缩潜向量，不适用。</dd>
-      <dt>RoPE 维度占比</dt><dd>全局层每个头里加 RoPE 的维度比例。1 是全部维度；1/4、1/3 之类是部分 RoPE，其余维度不带位置；0 记为 NoPE，位置信息交给滑窗层、分块层、线性层或 Mamba 层，括号里是例外（Inkling 改用学到的相对位置 logit；North Mini Code 的第一个全局层是 dense 层，仍加 RoPE）。Mistral Large 4 每 4 层有一层不加 RoPE，NoPE 列记为“18/72 层”。MLA 按 RoPE 维度 / Q·K 维度算。</dd>
-      <dt>全局注意力层占比</dt><dd>KV 缓存随上下文增长的层（full、MLA、DSA、稀疏或压缩注意力）占全部 token mixer 层的比例。线性注意力、Mamba、短卷积的状态大小固定，滑窗层和 Llama 4 的分块层只缓存窗口或块内的 token。</dd>
-      <dt>KV cache / token</dt><dd>上下文足够长时每多一个 token 要多存的 bf16 KV：全局层数 × 每层每 token 的 K、V 维度 × 2 字节。MLA 按 kv_lora_rank + RoPE 维度算；DeepSeek V4 的压缩层按压缩率摊到每个 token（CSA 每 4 个 token 存一条，HCA 每 128 个）。不含线性层状态、滑窗缓存和稀疏注意力的索引键；DeepSeek V4.1 改了压缩配置的写法，暂不计算。</dd>
-      <dt>注意力</dt><dd>按 config.json 里的层类型字段推断（layer_types、kda_layers、full_attention_interval 等），只数 token mixer 的种类和层数，细节以技术报告为准。</dd>
-      <dt>结构特征</dt><dd>按 config.json 的字段识别，config 里没有写的部分（比如 Qwen3 的 QK-norm、gpt-oss 的 sink、各家的路由打分函数）对照 transformers 5.21 和厂家仓库里的建模代码核对，规则在 <code>scripts/hfconfig.py</code> 的 <code>ARCH</code> 里。config 未公开或看不出的记为"?"，不计入采用率。</dd>
-      <dt>结构指纹</dt><dd>形状数值按全部配置的五分位上色，只表示在收录范围内的相对大小；格子里的值和全表一致。按档位分组时每档的第一行、按厂家汇总时的格子，是用了该特征的配置数 / 看得出用没用的配置数；档位汇总行的形状数值是这一档的中位数。</dd>
-      <dt>线性注意力</dt><dd>状态大小固定的 token mixer：Gated DeltaNet（GDN）、Kimi Delta Attention（KDA）、MiniMax 和百灵 Ring linear、Ling 2.5 / 2.6 的 Lightning Attention、Mamba-2，以及 LFM2 的门控短卷积（表中记为“门控卷积”）。</dd>
-      <dt>稀疏注意力</dt><dd>每个 query 只看部分 KV：DeepSeek 的 DSA、LongCat 的 LSA（DSA 的 top-k 预算里固定留开头和最近的 token，并跨层复用索引）、Qwen3.8-Flash-Next 的 QSA、Step-5 的 CSA、MiniMax M3 的块稀疏、Ring-mini-sparse 的 MoBA（KV 分块，每个 query 只读选中的几块）、DeepSeek V4 的压缩注意力（CSA + HCA）。ERNIE 5.5 Flash 大部分层是 HCA，每 7 层一个 MLA+DSA 层，记为 DSA+HCA。</dd>
-      <dt>输出门</dt><dd>softmax 注意力层的输出乘一个由输入算出的门（Gated Attention，多数用 sigmoid，Laguna 用 softplus），每个头一个标量的记"逐头"，每个元素一个的记"逐元素"，config 没写明的记 ✓。线性注意力层自带的门不算。</dd>
-      <dt>Sink / QK-norm</dt><dd>Sink 是每个头一个可学习的 logit，让注意力可以"什么都不看"；QK-norm 是对每个头的 Q、K 做 RMSNorm（Llama 4 Scout 和 ZAYA1 用 L2 归一化，Scout 只在 RoPE 层用；Ling 2.5 / 2.6 只在 Lightning 层用）。MLA 对低秩潜向量的归一化不算 QK-norm。</dd>
-      <dt>K=V / 跨层 KV / 索引复用</dt><dd>K=V：K 和 V 用同一个投影，只缓存一份。跨层 KV：后面的层直接读前面源层的 KV，自己不再存。索引复用：稀疏注意力的 top-k 选择由几层共用（IndexShare、跨层索引），省掉索引器的计算。</dd>
-      <dt>QKV 短卷积</dt><dd>softmax 注意力的 Q、K、V 先沿序列过一个因果深度卷积（Primer 提出）。Inkling 对 K、V 和两个子层的输出各加一个 4 抽头卷积；ZAYA1 的 CCA 在压缩的潜空间里对 Q、K 做卷积。线性注意力层里自带的短卷积不算。</dd>
-      <dt>长度缩放（SSMax）</dt><dd>全局层把 query 按位置的 log 放大，长上下文里注意力不被摊平（Scalable-Softmax）。Llama 4 叫温度调节，Beam、Inkling 也只用在不加 RoPE 的全局层；Mistral Large 4 每层都用，系数按头学习（记为“逐头可学习”）。</dd>
-      <dt>超连接</dt><dd>把残差流扩成 n 路并用可学习的权重混合（Hyper-Connections）；mHC 用 Sinkhorn 把混合矩阵约束成双随机矩阵；iHC 是 Hy4 的写法。</dd>
-      <dt>AttnRes</dt><dd>Attention Residuals：每层的输入由对前面各层（按块）输出的注意力加权得到，代替固定的残差相加。</dd>
-      <dt>残差门 / 后置 norm</dt><dd>残差门：子层输出和残差按逐通道的可学习权重相加（Muse Spark 是保方差的门，ZAYA1 是两边各一组缩放）。后置 norm：子层输出再过一次 norm，前后都有的叫三明治，只在残差相加之后的叫 Post-LN，A.X K1 只在 MoE 输出后加。</dd>
-      <dt>GatedNorm / 并行块</dt><dd>GatedNorm：RMSNorm 的输出再乘一个由它算出的低秩 sigmoid 门，格子里是秩。并行块：注意力和 FFN 读同一个输入，输出一起加回残差（Cohere）。</dd>
-      <dt>共享专家门</dt><dd>共享专家的输出再乘一个由输入算出的门：Qwen 系是单独的 sigmoid 门，Inkling 让路由器给共享专家也打分（"路由加权"）。</dd>
-      <dt>零计算专家</dt><dd>不做计算的空专家，路由选中它就等于这个 token 少算一个专家（LongCat 的零计算专家、ZAYA1 的跳过专家），格子里是个数。</dd>
-      <dt>路由</dt><dd>打分函数（softmax、sigmoid、sqrtsoftplus）、无辅助损失的专家偏置（按分位数更新的记"分位数"，只在训练时用、权重里没有的记"仅训练"）、先选组再选专家的分组路由、前几层按 token id 哈希分配专家的哈希路由。</dd>
-      <dt>FFN 激活 / 限幅</dt><dd>多数是 SwiGLU；Gemma 4 用 GeGLU，gpt-oss 和 MiniMax M3 用带限幅和偏移的 SwiGLU（SwiGLU-OAI），Nemotron 3 用 ReLU²，Kimi K3 用 SiTU。限幅是把 SwiGLU 的输出截到上限，括号里是只在部分层；SiTU 用 β·tanh(x/β) 软限幅。</dd>
-      <dt>MTP</dt><dd>多 token 预测模块的层数；config 没写的从权重索引里数 mtp 层（需申请访问的仓库读公开副本的索引），读不到的记"?"。</dd>
-      <dt>softcap</dt><dd>输出 logit 过 c·tanh(x/c) 的软截断，格子里是 c。</dd>
-      <dt>N-gram 记忆</dt><dd>用哈希过的 n-gram 查一张大嵌入表：Engram 和 Qwen3.8-Flash-Next 在中间层注入，LongCat 加在输入嵌入上。</dd>
-      <dt>设计细节对照</dt><dd>每个位置（注意力输出门、路由权重、残差相加、norm 等）列出收录模型里出现过的写法，公式按建模代码写；config 和代码都看不出的记为“细节未公开”。“相关工作”是论文或训练配置里的写法，收录的模型还没用。名单和匹配规则在 <code>details.yaml</code>，构建时检查每个模型都归到了某种写法下。</dd>
-      <dt>前沿技术追踪</dt><dd>名单在 <code>techniques.yaml</code>，每条有最早出处、独立实验的结果和链接。采用数由结构特征自动统计；config 看不出的技术（优化器、损失函数）只列技术报告里写明的，没有就留空，不靠猜。</dd>
-      <dt>config 来源</dt><dd>仓库需申请访问时，config 取自 transformers 里对应的默认配置或公开副本，存档在本仓库的 <code>configs/</code> 下，并在表格详情里注明。</dd>
-      <dt>榜单分数</dt><dd>两个公开榜单的分数，用来给配置排序，每次构建时重新读取。ECI 是 Epoch AI 的能力指数（Epoch Capabilities Index），由 GPQA Diamond、SWE-bench Verified、HLE、FrontierMath 等几十项 benchmark 的成绩拟合成一个数，开源和闭源模型在同一把尺子上；Arena 是 arena.ai（原 LMArena）文本榜的分数，来自用户对匿名回答的两两投票，用的是默认的 style control 榜，更接近聊天体验而不是 benchmark。榜单上的名字和每个配置的型号、仓库名和同架构的各个版本对上（规则在 <code>scripts/bench.py</code>，对不上的写在 <code>bench.yaml</code>），同一架构取最高分，并注明取自哪个版本：这些版本只换了后训练，架构还是这一个。分数只反映收录时的版本，小模型和地区性模型覆盖得少。两个榜的数据都按 CC BY 4.0 使用。Artificial Analysis 的智能指数没有收录：它的条款不允许把分数做成表格或数据文件公开。</dd>
-      <dt>归一均分</dt><dd>两个榜的尺度不同（ECI 大约 120–160，Arena 是 1300–1500 上下的 Elo 分），收录的配置也不一样，所以先把每个榜换成标准分：（分数 − 均值）÷ 标准差，均值和标准差都按两个榜都有分的那些配置来算，只上了一个榜的配置也就和同一组配置比。每个配置平均它有分数的榜，最后把站内最高记 100、最低记 0。只上了一个榜的配置会标出来（如“仅 Arena”），它的均分只代表那一个榜。哪个榜都没有的配置排在最后。</dd>
-      <dt>档位</dt><dd>按总参数：小 ≤ 50B，中 50–500B，大 ≥ 500B。</dd>
-      <dt>收录范围</dt><dd>2025 年及以后首次上传的开源 MoE。架构完全相同（注意力、MoE、层数和各维度、模态、词表都一样），只改了后训练、上下文长度、MTP 层或权重格式的版本合并为一行，型号显示其中最新的版本；架构有任何不同就单独成行。每次构建都会读取每个版本的 config.json 核对。</dd>
+      <dt data-i18n="d1.t">E / k / s</dt><dd data-i18n="d1.d">Number of routed experts / routed experts selected per token / number of shared experts. For models whose layers differ, the mean or mode is used and the table marks it ≈.</dd>
+      <dt data-i18n="d2.t">E/k</dt><dd data-i18n="d2.d">Routing sparsity, counting routed experts only.</dd>
+      <dt data-i18n="d3.t">Expert activation A</dt><dd data-i18n="d3.d">(k + s) / (E + s), shared experts included.</dd>
+      <dt data-i18n="d4.t">Parameter activation ratio</dt><dd data-i18n="d4.d">Active params / total params, both taken from the model card or tech report (they are not in the config).</dd>
+      <dt data-i18n="d5.t">G</dt><dd data-i18n="d5.d">2d / d<sub>expert</sub>, where d is the hidden size. Compared with the standard FFN width of 8d/3, G≈2.7 means "one expert = one dense FFN".</dd>
+      <dt data-i18n="d6.t">d/L</dt><dd data-i18n="d6.d">Aspect ratio: hidden size divided by the number of token-mixer layers (attention, linear-attention or Mamba layers). LongCat has two attention sub-layers per layer, counted as two layers.</dd>
+      <dt data-i18n="d7.t">Attention width ratio</dt><dd data-i18n="d7.d">Global-layer query heads × per-head Q·K dim, divided by d_model. A Llama-style design with heads × head dim = d gives 1; MLA's Q·K dim is the no-position part plus the RoPE part (128 + 64 for DeepSeek V3), and the DeepSeek V4 family uses 512 per head, hence 6.4–9.1. The larger the ratio, the wider attention is relative to the residual stream.</dd>
+      <dt data-i18n="d8.t">Q/KV</dt><dd data-i18n="d8.d">How many query heads each KV head serves in a global layer (the GQA group size); the larger, the cheaper the KV cache. Not applicable to MLA, which caches a compressed latent.</dd>
+      <dt data-i18n="d9.t">RoPE dimension share</dt><dd data-i18n="d9.d">The fraction of each head's dimensions that get RoPE in global layers. 1 means all dimensions; 1/4, 1/3 and similar are partial RoPE, with the remaining dimensions carrying no position; 0 is recorded as NoPE, leaving position information to sliding-window, chunked, linear or Mamba layers, with exceptions in parentheses (Inkling uses a learned relative-position logit instead; North Mini Code's first global layer is a dense layer and still gets RoPE). Mistral Large 4 has one layer in every 4 without RoPE, so its NoPE column reads "18/72 layers". For MLA it is computed as RoPE dim / Q·K dim.</dd>
+      <dt data-i18n="d10.t">Share of global-attention layers</dt><dd data-i18n="d10.d">The fraction of token-mixer layers whose KV cache grows with context (full, MLA, DSA, sparse or compressed attention). Linear attention, Mamba and short-convolution state sizes are fixed, and sliding-window layers and Llama 4's chunked layers only cache the tokens in the window or chunk.</dd>
+      <dt data-i18n="d11.t">KV cache / token</dt><dd data-i18n="d11.d">The bf16 KV that each extra token adds when the context is long enough: number of global layers × K and V dims per token per layer × 2 bytes. MLA is computed from kv_lora_rank + RoPE dim; DeepSeek V4's compressed layers are amortized per token by their compression ratio (CSA stores one entry per 4 tokens, HCA one per 128). Linear-layer state, sliding-window caches and sparse-attention index keys are not counted; DeepSeek V4.1 changed how the compression config is written and is not computed for now.</dd>
+      <dt data-i18n="d12.t">Attention</dt><dd data-i18n="d12.d">Inferred from the layer-type fields in config.json (layer_types, kda_layers, full_attention_interval, etc.); it only counts the kinds and number of token-mixer layers, so defer to the tech report for details.</dd>
+      <dt data-i18n="d13.t">Structural features</dt><dd data-i18n="d13.d">Recognized from the fields of config.json. Parts the config does not spell out (Qwen3's QK-norm, gpt-oss's sink, each vendor's routing scoring function) are checked against the modeling code in transformers 5.21 and the vendors' repositories; the rules are in <code>ARCH</code> in <code>scripts/hfconfig.py</code>. What a config does not disclose or show is recorded as "?" and left out of adoption rates.</dd>
+      <dt data-i18n="d14.t">Structural fingerprint</dt><dd data-i18n="d14.d">Shape numbers are colored by quintile over all configurations and only indicate relative size within the included set; the values in the cells match the full table. When grouped by tier, the first row of each tier, and when aggregated by vendor, each cell, shows the number of configurations that use the feature / the number where it can be determined; the shape numbers in a tier summary row are the median of that tier.</dd>
+      <dt data-i18n="d15.t">Linear attention</dt><dd data-i18n="d15.d">Token mixers with a fixed state size: Gated DeltaNet (GDN), Kimi Delta Attention (KDA), MiniMax and Ling's Ring linear, Lightning Attention in Ling 2.5 / 2.6, Mamba-2, and LFM2's gated short convolution (shown as "gated conv" in the table).</dd>
+      <dt data-i18n="d16.t">Sparse attention</dt><dd data-i18n="d16.d">Each query sees only part of the KV: DeepSeek's DSA, LongCat's LSA (the DSA top-k budget always keeps the first and the most recent tokens, and reuses indices across layers), Qwen3.8-Flash-Next's QSA, Step-5's CSA, MiniMax M3's block sparsity, Ring-mini-sparse's MoBA (KV is split into blocks and each query reads only a few selected blocks), and DeepSeek V4's compressed attention (CSA + HCA). Most layers of ERNIE 5.5 Flash are HCA, with an MLA+DSA layer every 7 layers, recorded as DSA+HCA.</dd>
+      <dt data-i18n="d17.t">Output gate</dt><dd data-i18n="d17.d">The output of a softmax-attention layer is multiplied by a gate computed from the input (Gated Attention; mostly sigmoid, Laguna uses softplus). One scalar per head is recorded as "per-head", one per element as "per-element", and a config that does not say is marked ✓. Gates built into linear-attention layers do not count.</dd>
+      <dt data-i18n="d18.t">Sink / QK-norm</dt><dd data-i18n="d18.d">A sink is one learnable logit per head that lets attention "look at nothing"; QK-norm applies RMSNorm to each head's Q and K (Llama 4 Scout and ZAYA1 use L2 normalization, Scout only in RoPE layers; Ling 2.5 / 2.6 only in Lightning layers). Normalizing MLA's low-rank latents does not count as QK-norm.</dd>
+      <dt data-i18n="d19.t">K=V / cross-layer KV / index reuse</dt><dd data-i18n="d19.d">K=V: K and V share one projection and only one copy is cached. Cross-layer KV: later layers read the KV of an earlier source layer directly and store none of their own. Index reuse: the top-k selection of sparse attention is shared by several layers (IndexShare, cross-layer indices), saving the indexer's computation.</dd>
+      <dt data-i18n="d20.t">QKV short convolution</dt><dd data-i18n="d20.d">Q, K and V of softmax attention first pass through a causal depthwise convolution along the sequence (introduced by Primer). Inkling adds a 4-tap convolution on K, V and on the outputs of both sub-layers; ZAYA1's CCA convolves Q and K in the compressed latent space. Short convolutions built into linear-attention layers do not count.</dd>
+      <dt data-i18n="d21.t">Length scaling (SSMax)</dt><dd data-i18n="d21.d">Global layers scale the query up with the log of the position so that attention does not flatten out over long contexts (Scalable-Softmax). Llama 4 calls it temperature tuning; Beam and Inkling also use it only in global layers without RoPE; Mistral Large 4 uses it in every layer with per-head learned coefficients (recorded as "per-head learnable").</dd>
+      <dt data-i18n="d22.t">Hyper-connections</dt><dd data-i18n="d22.d">The residual stream is widened to n streams that are mixed with learnable weights (Hyper-Connections); mHC constrains the mixing matrix to be doubly stochastic with Sinkhorn; iHC is Hy4's formulation.</dd>
+      <dt data-i18n="d23.t">AttnRes</dt><dd data-i18n="d23.d">Attention Residuals: each layer's input is an attention-weighted combination of the outputs of earlier layers (by block), replacing the fixed residual sum.</dd>
+      <dt data-i18n="d24.t">Residual gate / post-norm</dt><dd data-i18n="d24.d">Residual gate: the sublayer output and the residual are added with per-channel learnable weights (Muse Spark uses a variance-preserving gate, ZAYA1 a pair of scales). Post-norm: the sublayer output passes through one more norm; one before and after is called sandwich, one only after the residual addition is Post-LN, and A.X K1 adds it only after the MoE output.</dd>
+      <dt data-i18n="d25.t">GatedNorm / parallel block</dt><dd data-i18n="d25.d">GatedNorm: the RMSNorm output is multiplied by a low-rank sigmoid gate computed from it; the cell shows the rank. Parallel block: attention and the FFN read the same input and their outputs are added back to the residual together (Cohere).</dd>
+      <dt data-i18n="d26.t">Shared-expert gate</dt><dd data-i18n="d26.d">The shared expert's output is multiplied by a gate computed from the input: the Qwen family uses a separate sigmoid gate, and Inkling has the router also score the shared expert ("routing-weighted").</dd>
+      <dt data-i18n="d27.t">Zero-compute experts</dt><dd data-i18n="d27.d">Empty experts that compute nothing; when the router picks one, that token effectively uses one fewer expert (LongCat's zero-compute experts, ZAYA1's skip experts). The cell shows the count.</dd>
+      <dt data-i18n="d28.t">Routing</dt><dd data-i18n="d28.d">The scoring function (softmax, sigmoid, sqrtsoftplus), the auxiliary-loss-free expert bias (updated by quantile is recorded as "quantile", training-only and absent from the weights as "training only"), grouped routing that first picks groups and then experts, and hash routing that assigns experts by token-id hash in the first few layers.</dd>
+      <dt data-i18n="d29.t">FFN activation / clamp</dt><dd data-i18n="d29.d">Mostly SwiGLU; Gemma 4 uses GeGLU, gpt-oss and MiniMax M3 use SwiGLU with clamping and offset (SwiGLU-OAI), Nemotron 3 uses ReLU², and Kimi K3 uses SiTU. Clamping caps the SwiGLU output at an upper limit, with parentheses meaning only some layers; SiTU soft-clamps with β·tanh(x/β).</dd>
+      <dt data-i18n="d30.t">MTP</dt><dd data-i18n="d30.d">The number of layers in the multi-token-prediction module. If the config does not say, the mtp layers are counted from the weight index (for gated repositories, the index of a public copy); when it cannot be read, "?".</dd>
+      <dt data-i18n="d31.t">softcap</dt><dd data-i18n="d31.d">Soft clipping of the output logit through c·tanh(x/c); the cell shows c.</dd>
+      <dt data-i18n="d32.t">N-gram memory</dt><dd data-i18n="d32.d">A large embedding table looked up with hashed n-grams: Engram and Qwen3.8-Flash-Next inject it in middle layers, LongCat adds it to the input embedding.</dd>
+      <dt data-i18n="d33.t">Design details compared</dt><dd data-i18n="d33.d">For each position (attention output gate, routing weights, residual addition, norms, etc.), the variants that appear among the included models are listed, with formulas written from the modeling code; what neither the config nor the code reveals is recorded as "details not disclosed". "Related work" are variants from papers or training configs that no included model uses yet. The list and the matching rules are in <code>details.yaml</code>, and the build checks that every model falls under some variant.</dd>
+      <dt data-i18n="d34.t">Frontier technique tracker</dt><dd data-i18n="d34.d">The list is in <code>techniques.yaml</code>; each entry has its earliest source, the result of independent experiments, and links. Adoption counts are computed automatically from the structural features; for techniques a config cannot show (optimizers, loss functions), only what the tech report states is listed, and otherwise the entry is left empty rather than guessed.</dd>
+      <dt data-i18n="d35.t">Config source</dt><dd data-i18n="d35.d">When a repository requires access approval, the config is taken from the corresponding default config in transformers or from a public copy, archived under <code>configs/</code> in this repository and noted in the table details.</dd>
+      <dt data-i18n="d36.t">Leaderboard scores</dt><dd data-i18n="d36.d">Scores from two public leaderboards, used to rank configurations and re-read on every build. ECI is Epoch AI's Epoch Capabilities Index, a single number fitted to dozens of benchmarks such as GPQA Diamond, SWE-bench Verified, HLE and FrontierMath, putting open and closed models on the same scale; Arena is the arena.ai (formerly LMArena) text leaderboard, from users' pairwise votes on anonymous answers, using the default style-control board, which is closer to chat experience than to benchmarks. Names on the leaderboards are matched against each configuration's model name, repository name and the versions of the same architecture (the rules are in <code>scripts/bench.py</code>, and unmatched ones are written in <code>bench.yaml</code>); for one architecture the highest score is taken and the version it came from is noted: those versions differ only in post-training, and the architecture is the same. A score reflects the version at the time of inclusion, and small and regional models are covered less. Both boards' data are used under CC BY 4.0. Artificial Analysis's intelligence index is not included: its terms do not allow publishing the scores as a table or data file.</dd>
+      <dt data-i18n="d37.t">Normalized average</dt><dd data-i18n="d37.d">The two boards have different scales (ECI is roughly 120–160, Arena is an Elo rating around 1300–1500) and cover different configurations, so each board is first converted to z-scores: (score − mean) ÷ standard deviation, with the mean and standard deviation computed over the configurations that have a score on both boards, so a configuration on only one board is compared with the same group. Each configuration averages the boards it has, and finally the highest on this site is set to 100 and the lowest to 0. A configuration on only one board is flagged (for example "Arena only"), and its average represents that one board only. Configurations on neither board are ranked last.</dd>
+      <dt data-i18n="d38.t">Tiers</dt><dd data-i18n="d38.d">By total params: small ≤ 50B, medium 50–500B, large ≥ 500B.</dd>
+      <dt data-i18n="d39.t">Scope</dt><dd data-i18n="d39.d">Open-weight MoE models first uploaded in 2025 or later. Versions with exactly the same architecture (attention, MoE, layer count and all dimensions, modality, vocabulary) that differ only in post-training, context length, MTP layers or weight format are merged into one row, with the model name showing the newest version; any architectural difference gets its own row. Every build reads each version's config.json to check this.</dd>
     </dl>
   </section>
 </main>
 
-<footer class="wrap foot">
-  数据来自各模型在 Hugging Face 上的 config.json 与模型卡；榜单分数来自 <a href="https://epoch.ai/benchmarks">Epoch AI</a> 和 <a href="https://arena.ai/leaderboard/text">Arena</a> 文本榜（CC BY 4.0）。发现错误请到 <a href="https://github.com/OtterLLM/moe-config-atlas/issues">GitHub issues</a> 反馈。
+<footer class="wrap foot" data-i18n="foot">
+  Data comes from each model's config.json and model card on Hugging Face; leaderboard scores come from <a href="https://epoch.ai/benchmarks">Epoch AI</a> and the <a href="https://arena.ai/leaderboard/text">Arena</a> text leaderboard (CC BY 4.0). Please report errors in <a href="https://github.com/OtterLLM/moe-config-atlas/issues">GitHub issues</a>.
 </footer>
 
+<!-- i18n-static.js runs before the blocking CDN fetch, so a Chinese page never shows the English markup first -->
+<script src="i18n-static.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
 <script src="app.js"></script>
 </body>
