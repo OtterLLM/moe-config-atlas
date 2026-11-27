@@ -23,3 +23,7 @@ jobs:
         run: python scripts/build.py --refresh
       - name: Leaderboard matches
         run: python scripts/bench.py
+      - name: Missing English translations
+        # Informational only: lists Chinese data strings that have no entry in site/i18n/en.json.
+        continue-on-error: true
+        run: python scripts/i18n_check.py
